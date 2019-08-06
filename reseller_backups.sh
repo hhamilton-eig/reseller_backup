@@ -25,7 +25,11 @@ fi
 for resold_user in $(awk -F':' -v var="$reseller" '$5 ~ var {if($9){print $9}}' /var/cpanel/accounting.log); do
     backup_path=$(find /backup{1..11}{,.old}/{archived-backups,cpbackup}/$backup_type/$resold_user -maxdepth 0 2>/dev/null)
     backup_path=${backup_path%/*}
+    if [[ -n $backup_path ]]; then
     resolds["$resold_user"]+="$backup_path"
+    else
+    echo "No $backup_type backups present for $resold_user"
+    fi
 done
 
 # Creates tar.gz for each resold user in $reseller_home/BackupNow
