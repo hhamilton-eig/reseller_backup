@@ -28,7 +28,8 @@ for resold_user in $(awk -F':' -v var="$reseller" '$5 ~ var {if($9){print $9}}' 
     if [[ -n $backup_path ]]; then
     resolds["$resold_user"]+="$backup_path"
     else
-    echo "No $backup_type backups present for $resold_user"
+    echo -e "No $backup_type backups present for $resold_user, run the script again
+using one of the other backup types if you need backups for this user"
     fi
 done
 
