@@ -22,6 +22,9 @@ fi
 
 # Gets resold usernames from accounting log
 # Include logic for if {daily,weekly,monthly} does not exist, but another does
+
+if [[ -z $1 ]]; then
+
 for resold_user in $(awk -F':' -v var="$reseller" '$5 ~ var {if($9){print $9}}' /var/cpanel/accounting.log); do
     backup_path=$(find /backup{1..11}{,.old}/{archived-backups,cpbackup}/$backup_type/$resold_user -maxdepth 0 2>/dev/null)
     backup_path=${backup_path%/*}
@@ -32,6 +35,22 @@ for resold_user in $(awk -F':' -v var="$reseller" '$5 ~ var {if($9){print $9}}' 
 using one of the other backup types if you need backups for this user"
     fi
 done
+
+else
+
+for resold_user in $(cat $1); do
+    backup_path=$(find /backup{1..11}{,.old}/{archived-backups,cpbackup}/$backup_type/$resold_user -maxdepth 0 2>/dev/null)
+    backup_path=${backup_path%/*}
+    if [[ -n $backup_path ]]; then
+    resolds["$resold_user"]+="$backup_path"
+    else
+    echo -e "No $backup_type backups present for $resold_user, run the script again
+using one of the other backup types if you need backups for this user"
+    fi
+done
+
+fi
+
 
 # Creates tar.gz for each resold user in $reseller_home/BackupNow
 
