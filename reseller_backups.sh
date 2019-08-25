@@ -3,6 +3,7 @@
 # Collects initial reseller info
 read -ep "Reseller username? " reseller
 reseller_home=$(find /home{1..11} -maxdepth 1 -name $reseller 2>/dev/null)
+partition_usage=$(df -h | grep -oP "(\d+)(?=\%\s+\\${reseller_home%/*})")
 
 # Array for resold users + backup paths
 declare -A resolds
@@ -37,10 +38,12 @@ fi
 read -ep "Do you want the most recent backup(s)? (yY/nN) " timeline
   if [[ $timeline == [yY] ]]; then
     for resold_user in "${!resolds[@]}"; do
-     for backup in "${resolds["$resold_user"]}"; do
+     backup_list="${resolds["$resold_user"]}"
+    IFS=','
+    for backup in $backup_list; do
 echo $backup
+unset IFS
 done
-#date -r "${backup}/${resold_user}/lastgenerated" +%F
   done
 # find most recent backup and archive it
 # Check backup dates
