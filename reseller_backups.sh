@@ -15,8 +15,8 @@ for backup in $backup_paths; do
 if [[ -n $backup ]]; then
 backup_date=$(date -r ${backup}/lastgenerated +%F)
 backup_path=${backup%$1*}
-backup="${backup_path} ${backup_date}"
-resolds["$1"]+="$backup,"
+backup="${backup_path} ${backup_date}\n"
+resolds["$1"]+="$backup"
 fi
 done
 }
@@ -38,12 +38,7 @@ fi
 read -ep "Do you want the most recent backup(s)? (yY/nN) " timeline
   if [[ $timeline == [yY] ]]; then
     for resold_user in "${!resolds[@]}"; do
-     backup_list="${resolds["$resold_user"]}"
-    IFS=','
-    for backup in $backup_list; do
-echo $backup
-unset IFS
-done
+    recent_backup=""${resolds["$resold_user"]}" | sort -k2 | tail -1"
   done
 # find most recent backup and archive it
 # Check backup dates
