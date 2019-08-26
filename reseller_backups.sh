@@ -38,8 +38,9 @@ fi
 read -ep "Do you want the most recent backup(s)? (yY/nN) " timeline
   if [[ $timeline == [yY] ]]; then
     for resold_user in "${!resolds[@]}"; do
-    recent_backup=""${resolds["$resold_user"]}" | sort -k2 | tail -1"
-  done
+      recent_backup="$(echo -e "${resolds["$resold_user"]}" | sort -k2 | tail -1)"
+      echo -e "$recent_backup"
+done
 # find most recent backup and archive it
 # Check backup dates
 #else
