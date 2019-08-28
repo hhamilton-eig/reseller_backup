@@ -22,7 +22,7 @@ fi
 
 # Finds all backups for given user of given type and puts in resolds array, defaults to all types
 find_backups() {
-    backup_paths=$(find /backup{1..11}{,.old}/{archived-backups,cpbackup}/${2:-{daily,weekly,monthly\}}/${1} -maxdepth 0 2>/dev/null)
+    backup_paths=$(find /backup{1..11}{,.old}/{archived-backups,cpbackup}/{daily,weekly,monthly}/${1} -maxdepth 0 2>/dev/null)
     if [[ -z $backup_paths ]]; then
         echo -e "No backups of the chosen type for ${resold_user}!\n"
     fi
