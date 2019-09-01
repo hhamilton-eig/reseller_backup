@@ -35,18 +35,6 @@ find_backups() {
         fi
     done
 }
-# Finds backups depending on whether usernames list was provided as $1
-if [[ -z $1 ]]; then
-    for resold_user in $(awk -F':' -v var="$reseller" '$5 ~ var {if($9){print $9}}' /var/cpanel/accounting.log); do
-        find_backups $resold_user
-    done
-
-else
-    for resold_user in $(cat $1); do
-        find_backups $resold_user
-    done
-
-fi
 
 # Asks for most recent backup
 read -ep "Do you want the most recent backup(s)? (yY/nN) " timeline
