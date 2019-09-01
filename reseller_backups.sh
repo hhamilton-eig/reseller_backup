@@ -6,7 +6,7 @@ reseller_home=$(find /home{1..11} -maxdepth 1 -name $reseller 2>/dev/null)
 partition_usage=$(df -h | grep -oP "(\d+)(?=\%\s+\\${reseller_home%/*})")
 
 # Checks that reseller's home partition usage is less than 50%
-if [[ $partition_usage > 70 ]]; then
+if (( $partition_usage > 70 )); then
     echo -e "\n${reseller_home%/*} is $partition_usage% full.
 Please remove data from this partition before continuing.\n"
     exit
