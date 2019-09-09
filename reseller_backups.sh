@@ -6,7 +6,7 @@ reseller_home=$(find /home{1..11} -maxdepth 1 -name $reseller 2>/dev/null)
 partition_usage=$(df -h | grep -oP "(\d+)(?=\%\s+\\${reseller_home%/*})")
 
 # Checks that reseller's home partition usage is less than 50%
-if [[ $partition_usage > 70 ]]; then
+if (( $partition_usage > 70 )); then
     echo -e "\n${reseller_home%/*} is $partition_usage% full.
 Please remove data from this partition before continuing.\n"
     exit
@@ -23,7 +23,7 @@ fi
 
 # Finds all backups for given user of given type and puts in resolds array, defaults to all types
 find_backups() {
-    backup_paths=$(find /backup{1..11}{,.old}/{archived-backups,cpbackup}/${2:-{daily,weekly,monthly\}}/${1} -maxdepth 0 2>/dev/null)
+    backup_paths=$(find /backup{1..11}{,.old}/{archived-backups,cpbackup}/"${2:-"{daily,weekly,monthly}"}"/${1} -maxdepth 0 2>/dev/null)
     if [[ -z $backup_paths ]]; then
     echo -e "No backups of the chosen type for ${resold_user}!\n"
     fi
@@ -36,18 +36,6 @@ find_backups() {
         fi
     done
 }
-# Finds backups depending on whether usernames list was provided as $1
-if [[ -z $1 ]]; then
-    for resold_user in $(awk -F':' -v var="$reseller" '$5 ~ var {if($9){print $9}}' /var/cpanel/accounting.log); do
-        find_backups $resold_user
-    done
-
-else
-    for resold_user in $(cat $1); do
-        find_backups $resold_user
-    done
-
-fi
 
 # Asks for most recent backup
 read -ep "Do you want the most recent backup(s)? (yY/nN) " timeline
