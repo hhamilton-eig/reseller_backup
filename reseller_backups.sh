@@ -5,6 +5,11 @@ read -ep "Reseller username? " reseller
 reseller_home=$(find /home{1..11} -maxdepth 1 -name $reseller 2>/dev/null)
 partition_usage=$(df -h | grep -oP "(\d+)(?=\%\s+\\${reseller_home%/*})")
 
+if [[ ! -d $reseller_home ]]; then
+echo -e "/home/${reseller} does not exist, using /home1/eig_backup_staging..."
+reseller_home=/home1/eig_backup_staging
+fi
+
 # Checks that reseller's home partition usage is less than 50%
 if (( $partition_usage > 70 )); then
     echo -e "\n${reseller_home%/*} is $partition_usage% full.
@@ -24,7 +29,7 @@ fi
 find_backups() {
     backup_paths=$(find /backup{1..11}{,.old}/{archived-backups,cpbackup}/"${2:-"{daily,weekly,monthly}"}"/${1} -maxdepth 0 2>/dev/null)
     if [[ -z $backup_paths ]]; then
-        echo -e "No backups of the chosen type for ${resold_user}!\n"
+        echo -e "No backups of the chosen type for ${resold_user}!"
     fi
     for backup in $backup_paths; do
         if [[ -n $backup ]]; then
@@ -53,6 +58,7 @@ if [[ $timeline == [yY] ]]; then
             echo "${reseller_home}/BackupNow/${resold_user}.tar.gz exists, skipping.."
         else
             resolds["$resold_user"]="$(echo -e "${resolds["$resold_user"]}" | sort -k2 | tail -1 | cut -d' ' -f1)"
+            echo -e "Creating archive of most recent backup for ${resold_user}..."
             tar -C "${resolds["$resold_user"]}" -cf $reseller_home/BackupNow/$resold_user.tar.gz $resold_user
         fi
     done
@@ -74,6 +80,7 @@ else
             echo "${reseller_home}/BackupNow/${resold_user}.tar.gz exists, skipping.."
         else
             resolds["$resold_user"]="$(echo -e "${resolds["$resold_user"]}" | cut -d' ' -f1)"
+            echo -e "Creating archive of ${backup_type} backup for ${resold_user}..."
             tar -C "${resolds["$resold_user"]}" -cf $reseller_home/BackupNow/$resold_user.tar.gz $resold_user
         fi
     done
