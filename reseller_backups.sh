@@ -59,7 +59,7 @@ if [[ $timeline == [yY] ]]; then
         else
             resolds["$resold_user"]="$(echo -e "${resolds["$resold_user"]}" | sort -k2 | tail -1 | cut -d' ' -f1)"
             echo -e "Creating archive of most recent backup for ${resold_user}..."
-            tar -C "${resolds["$resold_user"]}" -cf $reseller_home/BackupNow/$resold_user.tar.gz $resold_user
+            tar -C "${resolds["$resold_user"]}" -czf $reseller_home/BackupNow/$resold_user.tar.gz $resold_user
         fi
     done
 else
@@ -81,7 +81,7 @@ else
         else
             resolds["$resold_user"]="$(echo -e "${resolds["$resold_user"]}" | cut -d' ' -f1)"
             echo -e "Creating archive of ${backup_type} backup for ${resold_user}..."
-            tar -C "${resolds["$resold_user"]}" -cf $reseller_home/BackupNow/$resold_user.tar.gz $resold_user
+            tar -C "${resolds["$resold_user"]}" -cvf $reseller_home/BackupNow/$resold_user.tar.gz $resold_user
         fi
     done
 fi
